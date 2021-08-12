@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.lt-peacock</groupId>
 	<artifactId>lp-thymeleaf-dialect</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>Lt. Peacock Thymeleaf Dialect</name>
 	<description>Thymeleaf dialect that provides some utility features.</description>
 	<url>http://lp-dialect.lt-peacock.com</url>
@@ -24,7 +24,7 @@
 		<connection>scm:git:git://github.com/LieutenantPeacock/lp-thymeleaf-dialect.git</connection>
 		<developerConnection>scm:git:file://d:/LocRepo/lp-thymeleaf-dialect.git</developerConnection>
 		<url>https://github.com/LieutenantPeacock/lp-thymeleaf-dialect</url>
-	  <tag>v1.0.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<distributionManagement>
 		<snapshotRepository>
