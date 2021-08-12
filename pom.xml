@@ -1,10 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.lt-peacock</groupId>
 	<artifactId>lp-thymeleaf-dialect</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Lt. Peacock Thymeleaf Dialect</name>
 	<description>Thymeleaf dialect that provides some utility features.</description>
 	<url>http://lp-dialect.lt-peacock.com</url>
@@ -26,7 +24,8 @@
 		<connection>scm:git:git://github.com/LieutenantPeacock/lp-thymeleaf-dialect.git</connection>
 		<developerConnection>scm:git:file://d:/LocRepo/lp-thymeleaf-dialect.git</developerConnection>
 		<url>https://github.com/LieutenantPeacock/lp-thymeleaf-dialect</url>
-	</scm>
+	  <tag>v1.0.0</tag>
+  </scm>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
