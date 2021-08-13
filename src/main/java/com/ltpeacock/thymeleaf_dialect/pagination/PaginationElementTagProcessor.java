@@ -39,88 +39,86 @@ public class PaginationElementTagProcessor extends AbstractElementTagProcessor {
 			final IElementTagStructureHandler structureHandler) {
 		final IEngineConfiguration configuration = context.getConfiguration();
 		final IStandardExpressionParser parser = StandardExpressions.getExpressionParser(configuration);
-		int currentPage = ((Number) getRequiredAttribute(context, parser, tag, "currentPage")).intValue();
-		int firstPage = ((Number) getOrDefault(context, parser, tag, "firstPage", BigInteger.ONE)).intValue();
-		int lastPage = ((Number) getRequiredAttribute(context, parser, tag, "lastPage")).intValue();
-		int maxPages = ((Number) getOrDefault(context, parser, tag, "maxPages", BigInteger.TEN)).intValue();
-		PageGenerator pageGenerator = (PageGenerator) getOrDefault(context, parser, tag, "pageGenerator",
-				this.pageGenerator);
-		boolean generatePrevLink = (boolean) getOrDefault(context, parser, tag, "generatePrevLink", true);
-		boolean generateNextLink = (boolean) getOrDefault(context, parser, tag, "generateNextLink", true);
-		boolean generateFirstLink = (boolean) getOrDefault(context, parser, tag, "generateFirstLink", true);
-		boolean generateLastLink = (boolean) getOrDefault(context, parser, tag, "generateLastLink", true);
-		boolean generateDisabledLinks = (boolean) getOrDefault(context, parser, tag, "generateDisabledLinks", false);
-		String currentClass = getOrDefault(context, parser, tag, "currentClass", "current").toString();
-		String pageClass = getOrDefault(context, parser, tag, "pageClass", "page").toString();
-		String pageLinkClass = getOrDefault(context, parser, tag, "pageLinkClass", "page-link").toString();
-		String rootClass = getOrDefault(context, parser, tag, "rootClass", "pagination").toString();
-		String prevClass = getOrDefault(context, parser, tag, "prevClass", "prev-page").toString();
-		String nextClass = getOrDefault(context, parser, tag, "nextClass", "next-page").toString();
-		String firstClass = getOrDefault(context, parser, tag, "firstClass", "first-page").toString();
-		String lastClass = getOrDefault(context, parser, tag, "lastClass", "last-page").toString();
-		String disabledClass = getOrDefault(context, parser, tag, "disabledClass", "disabled").toString();
-		String prevText = getOrDefault(context, parser, tag, "prevText", "&laquo; Prev").toString();
-		String nextText = getOrDefault(context, parser, tag, "nextText", "Next &raquo;").toString();
-		String firstText = getOrDefault(context, parser, tag, "firstText", "First").toString();
-		String lastText = getOrDefault(context, parser, tag, "lastText", "Last").toString();
-		String basePageLink = getOrDefault(context, parser, tag, "basePageLink", "javascript:;").toString();
-		if (basePageLink.endsWith("/"))
-			basePageLink = basePageLink.substring(0, basePageLink.length() - 1);
-		final List<PageItem> pages = pageGenerator.generatePages(currentPage, firstPage, lastPage, maxPages);
 		final IModelFactory modelFactory = context.getModelFactory();
 		final IModel model = modelFactory.createModel();
-		model.add(modelFactory.createOpenElementTag("ul", "class", rootClass));
-		if (generateFirstLink && (firstPage != currentPage || generateDisabledLinks)) {
-			addPage(modelFactory, model,
-					pageClass + " " + firstClass + (currentPage == firstPage ? " " + disabledClass : ""), pageLinkClass,
-					basePageLink, String.valueOf(firstPage), firstText);
-		}
-		if (generatePrevLink && (firstPage != currentPage || generateDisabledLinks)) {
-			addPage(modelFactory, model,
-					pageClass + " " + prevClass + (currentPage == firstPage ? " " + disabledClass : ""), pageLinkClass,
-					basePageLink, String.valueOf(currentPage - 1), prevText);
-		}
-		for (final PageItem page : pages) {
-			addPage(modelFactory, model, pageClass + (page.getNumber() == currentPage ? " " + currentClass : ""),
-					pageLinkClass, basePageLink, page.getLink(), page.getText());
-		}
-		if (generateNextLink && (lastPage != currentPage || generateDisabledLinks)) {
-			addPage(modelFactory, model,
-					pageClass + " " + nextClass + (currentPage == lastPage ? " " + disabledClass : ""), pageLinkClass,
-					basePageLink, String.valueOf(currentPage + 1), nextText);
-		}
-		if (generateLastLink && (lastPage != currentPage || generateDisabledLinks)) {
-			addPage(modelFactory, model,
-					pageClass + " " + lastClass + (currentPage == lastPage ? " " + disabledClass : ""), pageLinkClass,
-					basePageLink, String.valueOf(lastPage), lastText);
-		}
-		model.add(modelFactory.createCloseElementTag("ul"));
-		structureHandler.replaceWith(model, false);
-	}
+		class Util {
+			final int currentPage = ((Number) getRequiredAttribute("currentPage")).intValue();
+			final int firstPage = ((Number) getOrDefault("firstPage", BigInteger.ONE)).intValue();
+			final int lastPage = ((Number) getRequiredAttribute("lastPage")).intValue();
+			final int maxPages = ((Number) getOrDefault("maxPages", BigInteger.TEN)).intValue();
+			final PageGenerator pageGenerator = (PageGenerator) getOrDefault("pageGenerator",
+					PaginationElementTagProcessor.this.pageGenerator);
+			final boolean generatePrevLink = (boolean) getOrDefault("generatePrevLink", true);
+			final boolean generateNextLink = (boolean) getOrDefault("generateNextLink", true);
+			final boolean generateFirstLink = (boolean) getOrDefault("generateFirstLink", true);
+			final boolean generateLastLink = (boolean) getOrDefault("generateLastLink", true);
+			final boolean generateDisabledLinks = (boolean) getOrDefault("generateDisabledLinks", false);
+			final String currentClass = getOrDefault("currentClass", "current").toString();
+			final String pageClass = getOrDefault("pageClass", "page").toString();
+			final String pageLinkClass = getOrDefault("pageLinkClass", "page-link").toString();
+			final String rootClass = getOrDefault("rootClass", "pagination").toString();
+			final String prevClass = getOrDefault("prevClass", "prev-page").toString();
+			final String nextClass = getOrDefault("nextClass", "next-page").toString();
+			final String firstClass = getOrDefault("firstClass", "first-page").toString();
+			final String lastClass = getOrDefault("lastClass", "last-page").toString();
+			final String disabledClass = getOrDefault("disabledClass", "disabled").toString();
+			final String prevText = getOrDefault("prevText", "&laquo; Prev").toString();
+			final String nextText = getOrDefault("nextText", "Next &raquo;").toString();
+			final String firstText = getOrDefault("firstText", "First").toString();
+			final String lastText = getOrDefault("lastText", "Last").toString();
+			final String basePageLink = getOrDefault("basePageLink", "javascript:;").toString().replaceAll("/$", "");
 
-	private void addPage(final IModelFactory modelFactory, final IModel model, final String pageClass,
-			final String pageLinkClass, final String basePageLink, final String link, final String text) {
-		model.add(modelFactory.createOpenElementTag("li", "class", pageClass.trim()));
-		final Map<String, String> linkAttrs = new HashMap<>();
-		linkAttrs.put("class", pageLinkClass);
-		linkAttrs.put("href", basePageLink + "/" + link);
-		model.add(modelFactory.createOpenElementTag("a", linkAttrs, null, false));
-		model.add(modelFactory.createText(text));
-		model.add(modelFactory.createCloseElementTag("a"));
-		model.add(modelFactory.createCloseElementTag("li"));
-	}
+			Object getRequiredAttribute(final String attribute) {
+				final String value = tag.getAttributeValue(attribute);
+				if (value == null)
+					throw new TemplateProcessingException(
+							"Required attribute [" + attribute + "] not present on " + TAG_NAME + " tag");
+				return parser.parseExpression(context, value).execute(context);
+			}
 
-	private static Object getRequiredAttribute(final ITemplateContext context, final IStandardExpressionParser parser,
-			final IProcessableElementTag tag, final String attribute) {
-		final String value = tag.getAttributeValue(attribute);
-		if (value == null)
-			throw new TemplateProcessingException("Required attribute [" + attribute + "] not present on tag");
-		return parser.parseExpression(context, value).execute(context);
-	}
+			Object getOrDefault(final String attribute, final Object defaultValue) {
+				return Optional.ofNullable(tag.getAttributeValue(attribute))
+						.map(val -> parser.parseExpression(context, val).execute(context)).orElse(defaultValue);
+			}
 
-	private static Object getOrDefault(final ITemplateContext context, final IStandardExpressionParser parser,
-			final IProcessableElementTag tag, final String attribute, final Object defaultValue) {
-		return Optional.ofNullable(tag.getAttributeValue(attribute))
-				.map(val -> parser.parseExpression(context, val).execute(context)).orElse(defaultValue);
+			void addPage(final String pageClass, final String link, final String text) {
+				model.add(modelFactory.createOpenElementTag("li", "class", pageClass.trim()));
+				final Map<String, String> linkAttrs = new HashMap<>();
+				linkAttrs.put("class", pageLinkClass);
+				linkAttrs.put("href", basePageLink + "/" + link);
+				model.add(modelFactory.createOpenElementTag("a", linkAttrs, null, false));
+				model.add(modelFactory.createText(text));
+				model.add(modelFactory.createCloseElementTag("a"));
+				model.add(modelFactory.createCloseElementTag("li"));
+			}
+
+			void process() {
+				final List<PageItem> pages = pageGenerator.generatePages(currentPage, firstPage, lastPage, maxPages);
+				model.add(modelFactory.createOpenElementTag("ul", "class", rootClass));
+				if (generateFirstLink && (firstPage != currentPage || generateDisabledLinks)) {
+					addPage(pageClass + " " + firstClass + (currentPage == firstPage ? " " + disabledClass : ""),
+							String.valueOf(firstPage), firstText);
+				}
+				if (generatePrevLink && (firstPage != currentPage || generateDisabledLinks)) {
+					addPage(pageClass + " " + prevClass + (currentPage == firstPage ? " " + disabledClass : ""),
+							String.valueOf(currentPage - 1), prevText);
+				}
+				for (final PageItem page : pages) {
+					addPage(pageClass + (page.getNumber() == currentPage ? " " + currentClass : ""), page.getLink(),
+							page.getText());
+				}
+				if (generateNextLink && (lastPage != currentPage || generateDisabledLinks)) {
+					addPage(pageClass + " " + nextClass + (currentPage == lastPage ? " " + disabledClass : ""),
+							String.valueOf(currentPage + 1), nextText);
+				}
+				if (generateLastLink && (lastPage != currentPage || generateDisabledLinks)) {
+					addPage(pageClass + " " + lastClass + (currentPage == lastPage ? " " + disabledClass : ""),
+							String.valueOf(lastPage), lastText);
+				}
+				model.add(modelFactory.createCloseElementTag("ul"));
+				structureHandler.replaceWith(model, false);
+			}
+		}
+		new Util().process();
 	}
 }
