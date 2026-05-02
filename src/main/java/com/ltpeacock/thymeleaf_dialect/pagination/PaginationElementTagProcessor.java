@@ -28,10 +28,13 @@ public class PaginationElementTagProcessor extends AbstractElementTagProcessor {
 	private static final String TAG_NAME = "pagination";
 	private static final int PRECEDENCE = 1000;
 	private final PageGenerator pageGenerator;
+	private final PageLinkGenerator pageLinkGenerator;
 
-	public PaginationElementTagProcessor(final String dialectPrefix, final PageGenerator pageGenerator) {
+	public PaginationElementTagProcessor(final String dialectPrefix, final PageGenerator pageGenerator,
+			final PageLinkGenerator pageLinkGenerator) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
 		this.pageGenerator = pageGenerator;
+		this.pageLinkGenerator = pageLinkGenerator;
 	}
 
 	@Override
@@ -48,6 +51,8 @@ public class PaginationElementTagProcessor extends AbstractElementTagProcessor {
 			final int maxPages = ((Number) getOrDefault("maxPages", BigInteger.TEN)).intValue();
 			final PageGenerator pageGenerator = (PageGenerator) getOrDefault("pageGenerator",
 					PaginationElementTagProcessor.this.pageGenerator);
+			final PageLinkGenerator pageLinkGenerator = (PageLinkGenerator) getOrDefault("pageLinkGenerator",
+					PaginationElementTagProcessor.this.pageLinkGenerator);
 			final boolean generatePrevLink = (boolean) getOrDefault("generatePrevLink", true);
 			final boolean generateNextLink = (boolean) getOrDefault("generateNextLink", true);
 			final boolean generateFirstLink = (boolean) getOrDefault("generateFirstLink", true);
@@ -81,11 +86,11 @@ public class PaginationElementTagProcessor extends AbstractElementTagProcessor {
 						.map(val -> parser.parseExpression(context, val).execute(context)).orElse(defaultValue);
 			}
 
-			void addPage(final String pageClass, final String link, final String text) {
+			void addPage(final String pageClass, final int page, final String text) {
 				model.add(modelFactory.createOpenElementTag("li", "class", pageClass.trim()));
 				final Map<String, String> linkAttrs = new HashMap<>();
 				linkAttrs.put("class", pageLinkClass);
-				linkAttrs.put("href", basePageLink + "/" + link);
+				linkAttrs.put("href", pageLinkGenerator.generateLink(basePageLink, page));
 				model.add(modelFactory.createOpenElementTag("a", linkAttrs, null, false));
 				model.add(modelFactory.createText(text));
 				model.add(modelFactory.createCloseElementTag("a"));
@@ -97,23 +102,23 @@ public class PaginationElementTagProcessor extends AbstractElementTagProcessor {
 				model.add(modelFactory.createOpenElementTag("ul", "class", rootClass));
 				if (generateFirstLink && (firstPage != currentPage || generateDisabledLinks)) {
 					addPage(pageClass + " " + firstClass + (currentPage == firstPage ? " " + disabledClass : ""),
-							String.valueOf(firstPage), firstText);
+							firstPage, firstText);
 				}
 				if (generatePrevLink && (firstPage != currentPage || generateDisabledLinks)) {
 					addPage(pageClass + " " + prevClass + (currentPage == firstPage ? " " + disabledClass : ""),
-							String.valueOf(currentPage - 1), prevText);
+							currentPage - 1, prevText);
 				}
 				for (final PageItem page : pages) {
-					addPage(pageClass + (page.getNumber() == currentPage ? " " + currentClass : ""), page.getLink(),
+					addPage(pageClass + (page.getNumber() == currentPage ? " " + currentClass : ""), page.getNumber(),
 							page.getText());
 				}
 				if (generateNextLink && (lastPage != currentPage || generateDisabledLinks)) {
 					addPage(pageClass + " " + nextClass + (currentPage == lastPage ? " " + disabledClass : ""),
-							String.valueOf(currentPage + 1), nextText);
+							currentPage + 1, nextText);
 				}
 				if (generateLastLink && (lastPage != currentPage || generateDisabledLinks)) {
 					addPage(pageClass + " " + lastClass + (currentPage == lastPage ? " " + disabledClass : ""),
-							String.valueOf(lastPage), lastText);
+							lastPage, lastText);
 				}
 				model.add(modelFactory.createCloseElementTag("ul"));
 				structureHandler.replaceWith(model, false);

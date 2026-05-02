@@ -84,6 +84,11 @@ Attributes are specified on the `lp:pagination` tag with the syntax `attributeNa
 		<td><code>com.ltpeacock.thymeleaf_dialect.pagination.DefaultPageGenerator</code>, but this can be configured when registering the <code>LPDialect</code>.</td>
 	</tr>
 	<tr>
+		<td>pageLinkGenerator</td>
+		<td>The <code>com.ltpeacock.thymeleaf_dialect.pagination.PageLinkGenerator</code> object to use for generating the <code>href</code> of each page link from the <code>basePageLink</code> and the page number.</td>
+		<td><code>com.ltpeacock.thymeleaf_dialect.pagination.DefaultPageLinkGenerator</code> (which appends a slash and the page number to the base page link), but this can be configured when registering the <code>LPDialect</code>.</td>
+	</tr>
+	<tr>
 		<td>generatePrevLink</td>
 		<td>Whether or not to generate a link (at the start of the list of pages) pointing to the previous page. The value should be a boolean (either <code>true</code> or <code>false</code>).</td>
 		<td><code>true</code></td>
@@ -186,6 +191,14 @@ The default page generator when the `pageGenerator` attribute is not specified o
 ```java
 LPDialect lpDialect = new LPDialect();
 lpDialect.setPageGenerator(new MyPageGenerator());
+templateEngine.addDialect(lpDialect);
+```
+
+Similarly, the default page link generator used when the `pageLinkGenerator` attribute is not specified on the `lp:pagination` tag can be specified by calling `setPageLinkGenerator`. A `PageLinkGenerator` receives the configured `basePageLink` and a page number and returns the `href` for that page link. For example, to generate links with the page number as a query parameter (e.g. `/page?num=5`) instead of a path segment:
+
+```java
+LPDialect lpDialect = new LPDialect();
+lpDialect.setPageLinkGenerator((basePageLink, page) -> basePageLink + "?num=" + page);
 templateEngine.addDialect(lpDialect);
 ```
 

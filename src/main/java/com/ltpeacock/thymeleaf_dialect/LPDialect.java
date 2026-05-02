@@ -10,7 +10,9 @@ import org.thymeleaf.standard.processor.StandardXmlNsTagProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import com.ltpeacock.thymeleaf_dialect.pagination.DefaultPageGenerator;
+import com.ltpeacock.thymeleaf_dialect.pagination.DefaultPageLinkGenerator;
 import com.ltpeacock.thymeleaf_dialect.pagination.PageGenerator;
+import com.ltpeacock.thymeleaf_dialect.pagination.PageLinkGenerator;
 import com.ltpeacock.thymeleaf_dialect.pagination.PaginationElementTagProcessor;
 
 /**
@@ -22,6 +24,7 @@ import com.ltpeacock.thymeleaf_dialect.pagination.PaginationElementTagProcessor;
 public class LPDialect extends AbstractProcessorDialect {
 	private static final String DIALECT_NAME = "Lt. Peacock Dialect";
 	private PageGenerator pageGenerator = new DefaultPageGenerator();
+	private PageLinkGenerator pageLinkGenerator = new DefaultPageLinkGenerator();
 
 	public LPDialect() {
 		super(DIALECT_NAME, "lp", StandardDialect.PROCESSOR_PRECEDENCE);
@@ -30,7 +33,7 @@ public class LPDialect extends AbstractProcessorDialect {
 	@Override
 	public Set<IProcessor> getProcessors(final String dialectPrefix) {
 		final Set<IProcessor> processors = new HashSet<>();
-		processors.add(new PaginationElementTagProcessor(dialectPrefix, pageGenerator));
+		processors.add(new PaginationElementTagProcessor(dialectPrefix, pageGenerator, pageLinkGenerator));
 		processors.add(new StandardXmlNsTagProcessor(TemplateMode.HTML, dialectPrefix));
 		return processors;
 	}
@@ -43,5 +46,15 @@ public class LPDialect extends AbstractProcessorDialect {
 	 */
 	public void setPageGenerator(PageGenerator pageGenerator) {
 		this.pageGenerator = pageGenerator;
+	}
+
+	/**
+	 * Set the {@link PageLinkGenerator} used by default for the {@code lp:pagination} tag.
+	 * @param pageLinkGenerator The PageLinkGenerator to use when it is not specified
+	 * as an attribute on the {@code lp:pagination} tag.
+	 * The default is {@link DefaultPageLinkGenerator}.
+	 */
+	public void setPageLinkGenerator(PageLinkGenerator pageLinkGenerator) {
+		this.pageLinkGenerator = pageLinkGenerator;
 	}
 }
