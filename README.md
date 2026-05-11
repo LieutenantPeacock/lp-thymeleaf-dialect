@@ -4,13 +4,13 @@ This Thymeleaf dialect provides some common utility features.
 ## Installation
 JDK 8 is required at a minimum.
 
-This project is available as a [Maven artifact](https://search.maven.org/artifact/com.lt-peacock/lp-thymeleaf-dialect). Maven users can include it with the following dependency in pom.xml:
+This project is available as a [Maven artifact](https://central.sonatype.com/artifact/com.lt-peacock/lp-thymeleaf-dialect). Maven users can include it with the following dependency in pom.xml:
 
 ```xml
 <dependency>
 	<groupId>com.lt-peacock</groupId>
 	<artifactId>lp-thymeleaf-dialect</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 </dependency>
 ```
 
