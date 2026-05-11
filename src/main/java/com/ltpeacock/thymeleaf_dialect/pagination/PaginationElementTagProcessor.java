@@ -72,6 +72,7 @@ public class PaginationElementTagProcessor extends AbstractElementTagProcessor {
 			final String firstText = getOrDefault("firstText", "First").toString();
 			final String lastText = getOrDefault("lastText", "Last").toString();
 			final String basePageLink = getOrDefault("basePageLink", "javascript:;").toString().replaceAll("/$", "");
+			final Object id = getOrDefault("id", null);
 
 			Object getRequiredAttribute(final String attribute) {
 				final String value = tag.getAttributeValue(attribute);
@@ -99,7 +100,12 @@ public class PaginationElementTagProcessor extends AbstractElementTagProcessor {
 
 			void process() {
 				final List<PageItem> pages = pageGenerator.generatePages(currentPage, firstPage, lastPage, maxPages);
-				model.add(modelFactory.createOpenElementTag("ul", "class", rootClass));
+				final Map<String, String> rootAttrs = new HashMap<>();
+				rootAttrs.put("class", rootClass);
+				if (id != null) {
+					rootAttrs.put("id", id.toString());
+				}
+				model.add(modelFactory.createOpenElementTag("ul", rootAttrs, null, false));
 				if (generateFirstLink && (firstPage != currentPage || generateDisabledLinks)) {
 					addPage(pageClass + " " + firstClass + (currentPage == firstPage ? " " + disabledClass : ""),
 							firstPage, firstText);

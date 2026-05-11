@@ -183,6 +183,11 @@ Attributes are specified on the `lp:pagination` tag with the syntax `attributeNa
 		<td>The base page link for pages. The <code>href</code> for each page link will be the base page link appended with a slash and the page number. (If the specified value ends in a slash, it will first be removed.)</td>
 		<td><code>"javascript:;"</code></td>
 	</tr>
+	<tr>
+		<td>id</td>
+		<td>The <code>id</code> to add to the unordered list element that the <code>lp:pagination</code> tag is replaced with. If not specified, no <code>id</code> attribute is added.</td>
+		<td>None</td>
+	</tr>
 </table>
 
 ### Additional Configuration
